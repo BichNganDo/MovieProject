@@ -5,7 +5,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import servlets.admin.PartialServlet;
@@ -18,12 +17,16 @@ import servlets.admin.cate_film.ManageCategoryFilm;
 import servlets.admin.film.AddFilm;
 import servlets.admin.film.EditFilm;
 import servlets.admin.film.ManageFilm;
+import servlets.client.Home;
+import servlets.client.ListMovieByProperty;
+import servlets.client.MovieGrid;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        //<editor-fold defaultstate="collapsed" desc="admin">
         context.addServlet(new ServletHolder(new PartialServlet()), "/admin/partital/*");
 
         context.addServlet(new ServletHolder(new ManageCategoryFilm()), "/admin/cate_film");
@@ -39,6 +42,11 @@ public class Main {
         context.addServlet(new ServletHolder(new ApiFilmServlet()), "/admin/api/film");
 
         context.addServlet(new ServletHolder(new UploadFileServlet()), "/admin/upload-file");
+//</editor-fold>
+
+        context.addServlet(new ServletHolder(new Home()), "/");
+        context.addServlet(new ServletHolder(new MovieGrid()), "/the-loai");
+        context.addServlet(new ServletHolder(new ListMovieByProperty()), "/danh-sach-phim");
 
         ContextHandler resourceHandler = new ContextHandler("/static");
         String resource = "./public";
