@@ -48,7 +48,7 @@ public class FilmModel {
                 sql = sql + " AND film.property = ? ";
             }
 
-            sql = sql + " LIMIT ? OFFSET ? ";
+            sql = sql + " ORDER BY created_date DESC LIMIT ? OFFSET ? ";
             PreparedStatement ps = conn.prepareStatement(sql);
             int param = 1;
 
@@ -163,7 +163,9 @@ public class FilmModel {
             if (null == conn) {
                 return result;
             }
-            PreparedStatement getProductByIdStmt = conn.prepareStatement("SELECT * FROM `" + NAMETABLE + "` WHERE film.id = ? ");
+            PreparedStatement getProductByIdStmt = conn.prepareStatement("SELECT * FROM `" + NAMETABLE + "` "
+                    + " INNER JOIN cate_film ON film.id_cate = cate_film.id"
+                    + " WHERE film.id = ? ");
             getProductByIdStmt.setInt(1, id);
 
             ResultSet rs = getProductByIdStmt.executeQuery();
@@ -171,6 +173,7 @@ public class FilmModel {
             if (rs.next()) {
                 result.setId(rs.getInt("id"));
                 result.setIdCate(rs.getInt("id_cate"));
+                result.setCategory(rs.getString("cate_film.name"));
                 result.setTitle(rs.getString("title"));
                 result.setPosterUrlWithBaseDomain(rs.getString("poster"));
                 result.setDescription(rs.getString("description"));

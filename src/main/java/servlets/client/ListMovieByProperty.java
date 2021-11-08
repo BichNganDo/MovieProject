@@ -33,9 +33,36 @@ public class ListMovieByProperty extends HttpServlet {
         pageVariables.put("item_per_page", itemPerPage);
 
         String type = request.getParameter("type");
+        pageVariables.put("type", type);
+
+        FilterFilm filterFilmByProperty = new FilterFilm();
+        if ("thinh-hanh".equalsIgnoreCase(type)) {
+            filterFilmByProperty.setSearchProperty(1);
+        } else if ("sap-chieu".equalsIgnoreCase(type)) {
+            filterFilmByProperty.setSearchProperty(2);
+        } else {
+            filterFilmByProperty.setSearchProperty(4);
+        }
+
+        int totalFilmByProperty = FilmModel.INSTANCE.getTotalProduct(filterFilmByProperty);
+        pageVariables.put("total_film_by_property", totalFilmByProperty);
+
+        int totalPage = (int) Math.ceil((double) totalFilmByProperty / itemPerPage);
+        pageVariables.put("total_page", totalPage);
+
+        int page = NumberUtils.toInt(request.getParameter("page"), 1);
+        if (page > totalPage) {
+            page = totalPage;
+        }
+        if (page <= 0) {
+            page = 1;
+        }
+        pageVariables.put("current_page", page);
+
+        int offset = (page - 1) * itemPerPage;
 
         FilterFilm filterFilm = new FilterFilm();
-        filterFilm.setOffset(0);
+        filterFilm.setOffset(offset);
         filterFilm.setLimit(itemPerPage);
         filterFilm.setSearchStatus(1);
         if ("thinh-hanh".equalsIgnoreCase(type)) {
@@ -47,7 +74,7 @@ public class ListMovieByProperty extends HttpServlet {
         }
 
         List<Film> listFilmByProperty = FilmModel.INSTANCE.getSliceFilm(filterFilm);
-        pageVariables.put("list-film-by-property", listFilmByProperty);
+        pageVariables.put("list_film_by_property", listFilmByProperty);
 
         //Header Menu
         pageVariables.put("header_menu", PageGenerator.instance().getPage("client/include/header_menu.html", HeaderMenu.INSTANCE.buildHeaderMenuData(request)));

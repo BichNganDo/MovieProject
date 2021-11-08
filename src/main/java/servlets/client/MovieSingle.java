@@ -2,20 +2,19 @@ package servlets.client;
 
 import common.Config;
 import entity.film.Film;
-import entity.film.FilterFilm;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.FilmModel;
+import org.apache.commons.lang3.math.NumberUtils;
 import servlets.client.include.HeaderMenu;
 import templater.PageGenerator;
 
-public class Home extends HttpServlet {
+public class MovieSingle extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -23,32 +22,10 @@ public class Home extends HttpServlet {
         pageVariables.put("app_domain", Config.APP_DOMAIN);
         pageVariables.put("static_domain", Config.STATIC_DOMAIN);
 
-        //Trending
-        FilterFilm filterFilmTrending = new FilterFilm();
-        filterFilmTrending.setOffset(0);
-        filterFilmTrending.setLimit(12);
-        filterFilmTrending.setSearchStatus(1);
-        filterFilmTrending.setSearchProperty(1);
-        List<Film> listFilmByTrending = FilmModel.INSTANCE.getSliceFilm(filterFilmTrending);
-        pageVariables.put("list_film_by_trend", listFilmByTrending);
-
-        //Upcoming
-        FilterFilm filterFilmUpcoming = new FilterFilm();
-        filterFilmUpcoming.setOffset(0);
-        filterFilmUpcoming.setLimit(12);
-        filterFilmUpcoming.setSearchStatus(1);
-        filterFilmUpcoming.setSearchProperty(2);
-        List<Film> listFilmByUpcoming = FilmModel.INSTANCE.getSliceFilm(filterFilmUpcoming);
-        pageVariables.put("list_film_by_upcoming", listFilmByUpcoming);
-
-        //popular
-        FilterFilm filterFilmpopular = new FilterFilm();
-        filterFilmpopular.setOffset(0);
-        filterFilmpopular.setLimit(12);
-        filterFilmpopular.setSearchStatus(1);
-        filterFilmpopular.setSearchProperty(4);
-        List<Film> listFilmByPopular = FilmModel.INSTANCE.getSliceFilm(filterFilmpopular);
-        pageVariables.put("list_film_by_popular", listFilmByPopular);
+        int id = NumberUtils.toInt(request.getParameter("id"));
+        pageVariables.put("id_film", id);
+        Film filmById = FilmModel.INSTANCE.getFilmByID(id);
+        pageVariables.put("film_by_id", filmById);
 
         //Header Menu
         pageVariables.put("header_menu", PageGenerator.instance().getPage("client/include/header_menu.html", HeaderMenu.INSTANCE.buildHeaderMenuData(request)));
@@ -59,7 +36,7 @@ public class Home extends HttpServlet {
         pageVariables.put("footer_include", PageGenerator.instance().getPage("client/include/footer.html", pageVariablesHeader));
 
         response.setContentType("text/html;charset=UTF-8");
-        response.getWriter().println(PageGenerator.instance().getPage("client/index.html", pageVariables));
+        response.getWriter().println(PageGenerator.instance().getPage("client/moviesingle.html", pageVariables));
 
         response.setStatus(HttpServletResponse.SC_OK);
     }

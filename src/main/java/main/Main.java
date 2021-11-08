@@ -20,6 +20,7 @@ import servlets.admin.film.ManageFilm;
 import servlets.client.Home;
 import servlets.client.ListMovieByProperty;
 import servlets.client.MovieGrid;
+import servlets.client.MovieSingle;
 
 public class Main {
 
@@ -47,6 +48,7 @@ public class Main {
         context.addServlet(new ServletHolder(new Home()), "/");
         context.addServlet(new ServletHolder(new MovieGrid()), "/the-loai");
         context.addServlet(new ServletHolder(new ListMovieByProperty()), "/danh-sach-phim");
+        context.addServlet(new ServletHolder(new MovieSingle()), "/chi-tiet-phim");
 
         ContextHandler resourceHandler = new ContextHandler("/static");
         String resource = "./public";
